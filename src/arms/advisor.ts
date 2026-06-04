@@ -1,4 +1,4 @@
-/** The Arm A advisor: a token-frugal Opus-4.7 planner. Planning-only (ARCHITECTURE.md §3) — it emits
+/** The Arm A advisor: a token-frugal Opus-4.7 planner. Planning-only (ARCHITECTURE.md §3); it emits
  * a short numbered plan and never executes tools. Its usage is charged to Arm A. */
 import { type Task, type Usage, type ModelUsageMap } from "../config.js";
 import { runClaude } from "./claude.js";

@@ -6,7 +6,7 @@ import { isUp } from "../backend/server.js";
 import { HARNESSES } from "../harnesses/index.js";
 
 if (!(await isUp())) {
-  console.error("Mellum2 not up at http://127.0.0.1:8080 — start llama-server first.");
+  console.error("Mellum2 not up at http://127.0.0.1:8080; start llama-server first.");
   process.exit(1);
 }
 

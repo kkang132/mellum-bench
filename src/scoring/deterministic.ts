@@ -1,5 +1,5 @@
 /**
- * Deterministic scorers — PURE (no I/O, no clock, no model). Input: model output text + a task's
+ * Deterministic scorers; PURE (no I/O, no clock, no model). Input: model output text + a task's
  * SuccessSpec → a pass/fail Score. These are the CI gate (ARCHITECTURE.md §4-§5).
  */
 import type { SuccessSpec } from "../config.js";

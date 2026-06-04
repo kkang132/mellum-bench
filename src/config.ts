@@ -1,6 +1,6 @@
 /**
  * Typed configuration loading + shared types. Pure parsing/validation (file reads only).
- * No knowledge of harnesses/arms — this is data the rest of the system consumes.
+ * No knowledge of harnesses/arms; this is data the rest of the system consumes.
  */
 import { readFileSync } from "node:fs";
 import { parse as parseYaml } from "yaml";

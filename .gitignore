@@ -6,7 +6,7 @@ dist/
 # coverage
 coverage/
 
-# benchmark run artifacts (results, metering logs) — reproducible, not source
+# benchmark run artifacts (results, metering logs); reproducible, not source
 results/
 *.jsonl
 .bench-workdir/

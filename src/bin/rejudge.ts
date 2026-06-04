@@ -1,5 +1,5 @@
 #!/usr/bin/env tsx
-/** Re-score PERSISTED answers with the fixed judge — no arm re-run (cheap). Reads each
+/** Re-score PERSISTED answers with the fixed judge; no arm re-run (cheap). Reads each
  * results/work/<task>/<arm>/answer.txt, re-judges, rewrites scores.json, and recomputes report.json
  * (quality, aggregates, verdicts, crossover). Deterministic pass + cost are taken from the prior run. */
 import { readFileSync, writeFileSync, existsSync } from "node:fs";

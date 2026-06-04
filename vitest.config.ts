@@ -21,7 +21,7 @@ export default defineConfig({
         "src/metrics.ts",
         "src/config.ts"
       ],
-      // judge.ts is the non-deterministic LLM judge (paid, e2e-only) — not part of the pure gate.
+      // judge.ts is the non-deterministic LLM judge (paid, e2e-only); not part of the pure gate.
       exclude: ["src/scoring/judge.ts"],
       thresholds: {
         lines: 80,

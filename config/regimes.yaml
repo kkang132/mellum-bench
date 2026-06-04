@@ -1,5 +1,5 @@
 # v2: ONE fair run. The old agentic regime forced Mellum workers to drive tool loops (its weakest
-# skill) — dropped. Workers always get context inline (constrained_text). The single run is scored by
+# skill); dropped. Workers always get context inline (constrained_text). The single run is scored by
 # BOTH lenses (deterministic substance anchor + Opus-4.8 judge headline); separation is read across
 # the shallow→deep task axis, not across regimes.
 regimes:

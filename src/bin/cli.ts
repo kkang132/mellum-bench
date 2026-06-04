@@ -10,7 +10,7 @@ function renderTable(report: BenchReport): string {
   const rows = report.aggregates
     .sort((a, b) => a.arm.localeCompare(b.arm))
     .map((a) => {
-      const q = a.meanQuality === null ? "—" : a.meanQuality.toFixed(2);
+      const q = a.meanQuality === null ? "n/a" : a.meanQuality.toFixed(2);
       const sd = a.successPerDollar === Infinity ? "∞" : a.successPerDollar.toFixed(1);
       const qd = a.qualityPerDollar === Infinity ? "∞" : a.qualityPerDollar.toFixed(1);
       return `| ${a.arm} | ${(a.passRate * 100).toFixed(0)}% | ${q} | $${a.totalCostUsd.toFixed(4)} | ${Math.round(a.meanLatencyMs)}ms | ${sd} | ${qd} |`;

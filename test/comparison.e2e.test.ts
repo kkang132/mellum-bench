@@ -1,10 +1,10 @@
 /**
- * E2E comparison — REAL COST (advisor + Arm B + judge call Claude). Tagged via filename (*.e2e.test.ts)
+ * E2E comparison; REAL COST (advisor + Arm B + judge call Claude). Tagged via filename (*.e2e.test.ts)
  * and run only by `npm run test:e2e`. Requires Mellum2 + harnesses + claude CLI.
  *
- * Asserts the runner produces a well-formed report (every regime × arm × task cell, costs recorded,
- * winners + crossover computed). The DIRECTIONAL hypothesis — A wins a-favorable on success-per-$,
- * B wins b-favorable on quality — is model-dependent and surfaced in the printed table, not hard-asserted.
+ * Asserts the runner produces a well-formed report (every arm × task cell, costs recorded, winners +
+ * crossover computed). The directional hypothesis (Arm A favoured on success-per-dollar, Arm B on judge
+ * quality) is model-dependent; it is surfaced in the printed table, not hard-asserted.
  */
 import { describe, it, expect, beforeAll } from "vitest";
 import { fileURLToPath } from "node:url";
@@ -18,7 +18,7 @@ describe("A vs B benchmark (e2e, real cost)", () => {
   let report: BenchReport;
 
   beforeAll(async () => {
-    if (!(await isUp())) throw new Error("Mellum2 not up at :8080 — start llama-server first.");
+    if (!(await isUp())) throw new Error("Mellum2 not up at :8080; start llama-server first.");
     report = await runBenchmark({
       repoRoot: ROOT,
       tasksPath: join(ROOT, "config/tasks.yaml"),

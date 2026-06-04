@@ -8,7 +8,7 @@ import { loadTasks, type Task } from "./config.js";
 
 const DEPTH_ORDER: Record<Task["depth"], number> = { shallow: 0, medium: 1, deep: 2 };
 
-/** Tasks sorted shallow → deep — the ordering used to locate the crossover. */
+/** Tasks sorted shallow to deep; the ordering used to locate the crossover. */
 export function byDepth(tasks: Task[]): Task[] {
   return [...tasks].sort((a, b) => DEPTH_ORDER[a.depth] - DEPTH_ORDER[b.depth]);
 }

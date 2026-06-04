@@ -4,7 +4,7 @@
  * the runner, which calls `setContext()` before invoking each pipeline stage so every upstream
  * request is attributed to (taskId, stage, harness).
  *
- * No external deps — Node http only. Streams responses through to the client while tee-ing the body
+ * No external deps; Node http only. Streams responses through to the client while tee-ing the body
  * to a usage parser (handles both plain JSON and SSE `data:` chunks).
  */
 import { createServer, request as httpRequest, type Server } from "node:http";

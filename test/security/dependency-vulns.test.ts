@@ -15,11 +15,11 @@ function hasBin(bin: string): boolean {
 
 describe("dependency vulnerability gate", () => {
   it("osv-scanner reports no vulnerabilities for package-lock.json", () => {
-    expect(hasBin("osv-scanner"), "osv-scanner missing — run scripts/setup.sh (brew install osv-scanner)").toBe(true);
+    expect(hasBin("osv-scanner"), "osv-scanner missing; run scripts/setup.sh (brew install osv-scanner)").toBe(true);
 
     let raw = "";
     try {
-      // exit 0 = clean. Non-zero = vulns found (or error) — output captured for inspection.
+      // exit 0 = clean. Non-zero = vulns found (or error); output captured for inspection.
       raw = execSync(`osv-scanner --lockfile=package-lock.json --format=json`, {
         cwd: ROOT,
         encoding: "utf8",
@@ -68,7 +68,7 @@ describe("dependency vulnerability gate", () => {
       failed = true;
       raw = (e as { stdout?: string; stderr?: string }).stdout ?? (e as { stderr?: string }).stderr ?? "";
     }
-    // A tampered/forged package yields "invalid" signatures — that must fail. Missing signatures
+    // A tampered/forged package yields "invalid" signatures; that must fail. Missing signatures
     // (older packages) are tolerated; the command exits 0 when all present signatures verify.
     expect(/invalid/i.test(raw), `npm audit signatures reported invalid signatures:\n${raw}`).toBe(false);
     expect(failed, `npm audit signatures exited non-zero:\n${raw}`).toBe(false);

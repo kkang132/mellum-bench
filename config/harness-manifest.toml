@@ -6,7 +6,7 @@
 npm = "@openai/codex"
 version = "0.136.0"
 bin = "codex"
-invoke = "exec"                      # `codex exec [PROMPT]` — non-interactive
+invoke = "exec"                      # `codex exec [PROMPT]`; non-interactive
 # Custom OpenAI-compatible provider is supplied via `-c` overrides at call time (config/providers/codex.toml).
 
 [opencode]
@@ -23,7 +23,7 @@ bin = "pi"
 invoke = "print"                     # `pi -p --mode json --provider <p> --model <m> <prompt>`
 config = "config/providers/pi.models.json"  # installed to ~/.pi/agent/models.json by setup.sh
 
-# Backend the workers talk to (never 8080 directly — always via the proxy).
+# Backend the workers talk to (never 8080 directly; always via the proxy).
 [backend]
 llama_cpp_commit = "65ef50a"
 model = "Mellum2-12B-A2.5B-Thinking-Q5_K_M.gguf"

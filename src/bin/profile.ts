@@ -33,8 +33,25 @@ function unionMs(recs: MeterRecord[]): number {
   return total;
 }
 
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 function killStragglers(): void {
   try { execSync('pkill -f "opencode" 2>/dev/null; pkill -f "codex" 2>/dev/null', { stdio: "ignore" }); } catch { /* none */ }
+}
+
+// Kill any lingering harness server, then wait until the proxy is quiet (no new request for
+// `quietMs`). Run after each measurement so the next harness is uncontended and windows do not bleed.
+async function settle(quietMs = 2500, maxMs = 25000): Promise<void> {
+  killStragglers();
+  const start = Date.now();
+  let last = meter.records().length;
+  let quietSince = Date.now();
+  while (Date.now() - start < maxMs) {
+    await sleep(700);
+    const n = meter.records().length;
+    if (n !== last) { last = n; quietSince = Date.now(); killStragglers(); }
+    else if (Date.now() - quietSince >= quietMs) return;
+  }
 }
 
 const meter = await startMeter({ port: 8077, upstream: "http://127.0.0.1:8080" });
@@ -42,6 +59,8 @@ const tasks = loadTaskList(join(ROOT, "config/tasks.yaml"));
 
 interface Row { task: string; runner: string; wallS: number; modelS: number; ovhS: number; calls: number; comp: number }
 const rows: Row[] = [];
+
+killStragglers(); // clear anything left from a prior session before measuring
 
 for (const task of tasks) {
   const corpus = renderCorpus(readFixtures(task, ROOT));
@@ -59,17 +78,18 @@ for (const task of tasks) {
     });
     await res.text();
     const wall = Date.now() - t0;
+    await settle();
     const recs = meter.records().slice(before);
     rows.push({ task: task.id, runner: "raw", wallS: wall / 1000, modelS: unionMs(recs) / 1000, ovhS: (wall - unionMs(recs)) / 1000, calls: recs.length, comp: recs.reduce((a, r) => a + r.completionTokens, 0) });
   }
 
   for (const [name, h] of Object.entries(HARNESSES)) {
-    killStragglers();
     const before = meter.records().length;
     meter.setContext({ taskId: task.id, stage: "solo", harness: name });
     const t0 = Date.now();
     const res = await h.run({ prompt: task.prompt.trim(), corpus, driveMode: "constrained_text", cwd: ROOT, model: "mellum2", proxyUrl: meter.url, dummyKey, timeoutMs });
     const wall = Date.now() - t0;
+    await settle();
     const recs = meter.records().slice(before);
     const m = unionMs(recs);
     rows.push({ task: task.id, runner: name, wallS: wall / 1000, modelS: m / 1000, ovhS: (wall - m) / 1000, calls: recs.length, comp: recs.reduce((a, r) => a + r.completionTokens, 0) });

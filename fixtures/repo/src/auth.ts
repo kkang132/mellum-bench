@@ -22,7 +22,7 @@ interface Token {
  * Verify a token has not expired.
  *
  * BUG: `new Date(token.exp)` parses the UTC ISO string, but `Date.now()` is compared against
- * `expiry.getTime()` after `expiry` is shifted by the local timezone offset below — so on hosts
+ * `expiry.getTime()` after `expiry` is shifted by the local timezone offset below; so on hosts
  * east of UTC, still-valid tokens are treated as expired. This is the root cause of the incident.
  */
 export function verifyToken(token: Token): boolean {

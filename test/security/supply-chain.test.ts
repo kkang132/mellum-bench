@@ -86,7 +86,7 @@ describe("installed harness versions match the pinned manifest", () => {
   ] as const) {
     it(`${bin} == pin ${section}`, () => {
       const installed = installedVersion(bin);
-      expect(installed, `${bin} not installed — run scripts/setup.sh`).not.toBeNull();
+      expect(installed, `${bin} not installed; run scripts/setup.sh`).not.toBeNull();
       expect(installed).toBe(pin(section));
     });
   }

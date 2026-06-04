@@ -38,7 +38,7 @@ cmake -B build -DGGML_METAL=ON -DLLAMA_CURL=ON -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release -j --target llama-server
 
 # 2. The high-bit quantisation (avoid Q4_0: perplexity doubles, tokens repeat). Pin the HF revision
-#    and verify the file hash — a community re-upload cannot silently change under you.
+#    and verify the file hash; a community re-upload then cannot change it silently under you.
 hf download CodeFault/Mellum2-12B-A2.5B-Thinking-GGUF --include "*Q5_K_M*" --local-dir ./mellum2-q5km
 echo "931c9059dac9ebceaf7e728209a44e61813fa389f5c3622ca1ca13e4633b51e7  ./mellum2-q5km/Mellum2-12B-A2.5B-Thinking-Q5_K_M.gguf" | shasum -a 256 -c
 
@@ -65,7 +65,7 @@ staged files (secretlint), **pre-push** type-checks (`tsc --noEmit`). Override i
 `SKIP_SECRETLINT=1` / `SKIP_TYPECHECK=1`.
 
 Order of preliminaries: (i) Node ≥ 24; (ii) **build llama.cpp from source and serve the Mellum2 Q5_K_M
-GGUF** — §3 gives the exact `git clone` / `cmake` / `hf download` / `llama-server` commands (Ollama and
+GGUF**; §3 gives the exact `git clone` / `cmake` / `hf download` / `llama-server` commands (Ollama and
 the Homebrew bottle will *not* work; they reject arch `mellum`); (iii) authenticate the `claude` CLI;
 (iv) the two commands above. Harnesses reach Mellum2 through a metering proxy with a dummy key only;
 no real secret enters a worker.
@@ -86,7 +86,7 @@ each worker stage, the final answer, Arm B's transcript, and the per-model usage
 ## 6. Output
 
 One table over both arms, scored by both lenses, plus two verdicts (cost-efficiency; judge quality) and,
-for each lens, the crossover task — the first point, shallow→deep, at which Arm B overtakes Arm A.
+for each lens, the crossover task: the first point, shallow-to-deep, at which Arm B overtakes Arm A.
 
 ## 7. Observed (single run; illustrative, not definitive)
 
@@ -98,7 +98,7 @@ cleanly judged tasks). The separation lay in cost and speed:
 | Cost per solved task | ≈ $0.19 | ≈ $0.41 |
 | Latency per task (mean) | ≈ 107 s | ≈ 25 s |
 
-The hybrid matched frontier quality at ~half the cost per outcome, but ~4.3× slower — and that gap is
+The hybrid matched frontier quality at ~half the cost per outcome, but ~4.3× slower, and that gap is
 **architectural, not the model**. A *single* local Mellum call beats Arm B on four of five tasks
 (5–13 s vs 20–27 s); only the heaviest task (t5) favours Arm B (62 s vs 34 s). Arm A is slow because its
 three "stages" are **agent loops, not single calls**: on t3 they fired 8 Mellum calls / 17 k Thinking

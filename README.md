@@ -96,13 +96,16 @@ cleanly judged tasks). The separation lay in cost and speed:
 | | Arm A (advisor + Mellum2) | Arm B (Claude + subagents) |
 |---|---|---|
 | Cost per solved task | ≈ $0.19 | ≈ $0.41 |
-| Latency per task | ≈ 107 s | ≈ 25 s |
+| Latency per task (mean) | ≈ 107 s | ≈ 25 s |
 
-The hybrid matched frontier quality at roughly half the cost per outcome, but some four times slower. The
-latency is dominated by model generation (the Thinking variant emits thousands of tokens per call) and by
-`opencode` spawning a background server whose concurrent calls saturate a single GPU; per-call harness
-overhead is ≈ 1 s, hence negligible. n = 1; treat as directional. Full table, per-task quality, and the
-latency decomposition are in [`RESULTS.md`](./RESULTS.md).
+The hybrid matched frontier quality at ~half the cost per outcome, but ~4.3× slower — and that gap is
+**architectural, not the model**. A *single* local Mellum call beats Arm B on four of five tasks
+(5–13 s vs 20–27 s); only the heaviest task (t5) favours Arm B (62 s vs 34 s). Arm A is slow because its
+three "stages" are **agent loops, not single calls**: on t3 they fired 8 Mellum calls / 17 k Thinking
+tokens in series, behind a Claude advisor round-trip, to do what one call does in ~5 s. Per-call harness
+overhead is ~1 s. For these tasks the pipeline is **over-built** — it costs latency and advisor spend
+without improving quality. The likely fix is structural (adaptive depth: a single call when the task does
+not decompose); see [`RESULTS.md`](./RESULTS.md) for the full table, decomposition, and optimisations. n = 1.
 
 ## 8. Known limitations
 

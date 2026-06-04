@@ -3,7 +3,7 @@
 A benchmark of two architectures for summarisation and context-gathering: **Arm A**, a frontier
 *advisor* (Claude Opus 4.7) that plans once and delegates execution to local **Mellum2** workers
 behind three open harnesses (`codex`, `opencode`, `pi`); and **Arm B**, Claude (Opus 4.7) performing
-the whole task with its own subagents. The same five tasks are scored by two lenses — a deterministic
+the whole task with its own subagents. The same five tasks are scored by two lenses: a deterministic
 substance check and an Opus 4.8 judge.
 
 The contract that governs the code is [`ARCHITECTURE.md`](./ARCHITECTURE.md); read it before editing.
@@ -103,7 +103,7 @@ The hybrid matched frontier quality at ~half the cost per outcome, but ~4.3× sl
 (5–13 s vs 20–27 s); only the heaviest task (t5) favours Arm B (62 s vs 34 s). Arm A is slow because its
 three "stages" are **agent loops, not single calls**: on t3 they fired 8 Mellum calls / 17 k Thinking
 tokens in series, behind a Claude advisor round-trip, to do what one call does in ~5 s. Per-call harness
-overhead is ~1 s. For these tasks the pipeline is **over-built** — it costs latency and advisor spend
+overhead is ~1 s. For these tasks the pipeline is **over-built**. It costs latency and advisor spend
 without improving quality. The likely fix is structural (adaptive depth: a single call when the task does
 not decompose); see [`RESULTS.md`](./RESULTS.md) for the full table, decomposition, and optimisations. n = 1.
 

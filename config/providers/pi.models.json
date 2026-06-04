@@ -1,0 +1,24 @@
+{
+  "providers": {
+    "mellum": {
+      "name": "Mellum2 (local, via meter proxy)",
+      "baseUrl": "http://127.0.0.1:8077/v1",
+      "api": "openai-completions",
+      "apiKey": "MELLUM_DUMMY_KEY",
+      "models": [
+        {
+          "id": "mellum2",
+          "name": "Mellum2-12B-A2.5B-Thinking",
+          "api": "openai-completions",
+          "provider": "mellum",
+          "baseUrl": "http://127.0.0.1:8077/v1",
+          "reasoning": false,
+          "input": ["text"],
+          "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+          "contextWindow": 131072,
+          "maxTokens": 8192
+        }
+      ]
+    }
+  }
+}

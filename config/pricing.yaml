@@ -1,0 +1,19 @@
+# $/token pricing for the cost axis.
+# Authoritative cost for Claude calls comes from `claude -p`'s `total_cost_usd`; this table is used
+# for token-only estimates and to value Mellum2 (local) at zero. Prices are USD per 1M tokens.
+models:
+  mellum2-local:
+    input_per_mtok: 0
+    output_per_mtok: 0
+    cache_write_per_mtok: 0
+    cache_read_per_mtok: 0
+  claude-opus-4-7:
+    input_per_mtok: 15
+    output_per_mtok: 75
+    cache_write_per_mtok: 18.75
+    cache_read_per_mtok: 1.5
+  claude-opus-4-8:
+    input_per_mtok: 15
+    output_per_mtok: 75
+    cache_write_per_mtok: 18.75
+    cache_read_per_mtok: 1.5

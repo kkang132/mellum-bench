@@ -1,0 +1,22 @@
+# deps & build
+node_modules/
+dist/
+*.tsbuildinfo
+
+# coverage
+coverage/
+
+# benchmark run artifacts (results, metering logs) — reproducible, not source
+results/
+*.jsonl
+.bench-workdir/
+
+# local env / secrets (NEVER commit; harnesses use a dummy key only)
+.env
+.env.*
+!.env.example
+
+# editor / OS
+.DS_Store
+.idea/
+.vscode/

@@ -1,0 +1,23 @@
+#!/bin/sh
+# Block commits that contain secrets. Scans staged files with secretlint (pinned devDependency).
+# Enable once per clone: `git config core.hooksPath .githooks` (done by `npm run setup`).
+# Override in a genuine false-positive: `SKIP_SECRETLINT=1 git commit ...`.
+set -eu
+
+[ "${SKIP_SECRETLINT:-}" = "1" ] && exit 0
+
+bin="./node_modules/.bin/secretlint"
+if [ ! -x "$bin" ]; then
+  echo "pre-commit: secretlint not installed; run 'npm ci'. Commit allowed." >&2
+  exit 0
+fi
+
+staged=$(git diff --cached --name-only --diff-filter=ACM)
+[ -z "$staged" ] && exit 0
+
+# shellcheck disable=SC2086
+if ! printf '%s\n' "$staged" | xargs "$bin" --maskSecrets --secretlintrc .secretlintrc.json; then
+  echo "pre-commit: secretlint flagged potential secrets above; commit blocked." >&2
+  echo "            fix the file, or override with SKIP_SECRETLINT=1 if it is a false positive." >&2
+  exit 1
+fi

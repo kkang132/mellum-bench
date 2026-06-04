@@ -1,0 +1,32 @@
+# Pinned harness CLIs (the Mellum2 workers). Installed versions MUST equal these pins
+# (enforced by test/security/supply-chain.test.ts). Install via scripts/setup.sh.
+# All point at the local metering proxy (-> Mellum2) using a dummy API key only.
+
+[codex]
+npm = "@openai/codex"
+version = "0.136.0"
+bin = "codex"
+invoke = "exec"                      # `codex exec [PROMPT]` — non-interactive
+# Custom OpenAI-compatible provider is supplied via `-c` overrides at call time (config/providers/codex.toml).
+
+[opencode]
+npm = "opencode-ai"
+version = "1.0.163"
+bin = "opencode"
+invoke = "run"                       # `opencode run -m <provider>/<model> -p <prompt>`
+config = "config/providers/opencode.json"
+
+[pi]
+npm = "@mariozechner/pi-coding-agent"
+version = "0.73.0"
+bin = "pi"
+invoke = "print"                     # `pi -p --mode json --provider <p> --model <m> <prompt>`
+config = "config/providers/pi.models.json"  # installed to ~/.pi/agent/models.json by setup.sh
+
+# Backend the workers talk to (never 8080 directly — always via the proxy).
+[backend]
+llama_cpp_commit = "65ef50a"
+model = "Mellum2-12B-A2.5B-Thinking-Q5_K_M.gguf"
+server_url = "http://127.0.0.1:8080"
+proxy_url = "http://127.0.0.1:8077"  # metering passthrough; harnesses use this
+dummy_key_env = "MELLUM_DUMMY_KEY"

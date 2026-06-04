@@ -1,0 +1,43 @@
+{
+  "name": "mellum-bench",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Benchmark Arm A (Opus-4.7 advisor + local Mellum2 harness workers: codex/opencode/pi) vs Arm B (Claude subagent spawning) on summarization & context-gathering tasks.",
+  "engines": {
+    "node": ">=24"
+  },
+  "bin": {
+    "mellum-bench": "./dist/bin/cli.js"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:unit": "vitest run --coverage",
+    "test:e2e": "vitest run -c vitest.e2e.config.ts",
+    "security": "vitest run test/security",
+    "bench": "tsx src/bin/cli.ts",
+    "smoke": "tsx src/bin/smoke.ts",
+    "setup": "bash scripts/setup.sh",
+    "rejudge": "tsx src/bin/rejudge.ts",
+    "profile": "tsx src/bin/profile.ts",
+    "secretlint": "secretlint --maskSecrets '**/*'",
+    "audit:signatures": "npm audit signatures"
+  },
+  "dependencies": {
+    "@mariozechner/pi-ai": "0.73.1",
+    "yaml": "2.9.0",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@secretlint/secretlint-rule-pattern": "13.0.2",
+    "@secretlint/secretlint-rule-preset-recommend": "13.0.2",
+    "@types/node": "25.9.1",
+    "@vitest/coverage-v8": "4.1.8",
+    "secretlint": "13.0.2",
+    "tsx": "4.22.4",
+    "typescript": "6.0.3",
+    "vitest": "4.1.8"
+  }
+}

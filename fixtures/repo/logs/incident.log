@@ -1,0 +1,7 @@
+2026-06-04T09:01:12Z INFO  login attempt user=alice
+2026-06-04T09:01:12Z WARN  verifyToken rejected token sub=alice exp=2026-06-04T18:00:00Z reason="token expired"
+2026-06-04T09:01:13Z INFO  login attempt user=bob
+2026-06-04T09:01:13Z WARN  verifyToken rejected token sub=bob exp=2026-06-04T20:00:00Z reason="token expired"
+2026-06-04T09:02:40Z ERROR spike in AuthError("token expired") despite future exp timestamps
+2026-06-04T09:03:01Z NOTE  affected hosts all run in timezone UTC+9 (Asia/Tokyo); UTC hosts unaffected
+2026-06-04T09:05:00Z NOTE  tokens with exp hours in the future are treated as already expired

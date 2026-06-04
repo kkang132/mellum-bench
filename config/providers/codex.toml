@@ -1,0 +1,13 @@
+# Codex custom provider for local Mellum2 via the metering proxy.
+# Applied at call time with `-c` overrides (see src/harnesses/codex.ts), or merged into ~/.codex/config.toml.
+# Localhost HTTP is intentional (local inference endpoint); the dummy key carries no secret.
+
+[model_providers.mellum]
+name = "Mellum2 (local, via meter proxy)"
+base_url = "http://127.0.0.1:8077/v1"
+wire_api = "responses"
+env_key = "MELLUM_DUMMY_KEY"
+
+# Select with: codex exec -c model_provider=mellum -c model=mellum2 ...
+model = "mellum2"
+model_provider = "mellum"

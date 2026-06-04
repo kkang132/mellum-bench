@@ -1,0 +1,18 @@
+#!/bin/sh
+# Block pushes that do not type-check (tsc --noEmit). Cheap, reversible failures stay out of `main`.
+# Override a genuine emergency with: SKIP_TYPECHECK=1 git push.
+set -eu
+
+[ "${SKIP_TYPECHECK:-}" = "1" ] && exit 0
+
+if [ ! -x "./node_modules/.bin/tsc" ]; then
+  echo "pre-push: typescript not installed; run 'npm ci'. Push allowed." >&2
+  exit 0
+fi
+
+echo "pre-push: type-checking…" >&2
+if ! ./node_modules/.bin/tsc --noEmit; then
+  echo "pre-push: tsc reported type errors above; push blocked." >&2
+  echo "          fix them, or override with SKIP_TYPECHECK=1 git push." >&2
+  exit 1
+fi

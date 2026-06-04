@@ -1,0 +1,66 @@
+# The five e2e tasks (summarisation and context-gathering), shallow → deep.
+# v2: every task instructs the worker to wrap its final answer in <answer>…</answer>; the scorer
+# extracts and scores ONLY that region after stripping reasoning, so the Thinking variant's verbosity
+# no longer fails substance-correct answers. Scoring is substance, not format.
+
+tasks:
+  - id: t1-signatures
+    kind: context
+    depth: shallow
+    prompt: >
+      List every EXPORTED function and class name in the TypeScript files under fixtures/repo/src.
+      Put the final answer (the identifiers, one per line) between <answer> and </answer>.
+    fixtures: [fixtures/repo/src]
+    success:
+      type: set_subset       # all golden identifiers must appear; extra words are tolerated
+      golden: [hashPassword, verifyToken, AuthError, createUser, findUser, UserStore, connect, query]
+
+  - id: t2-changelog
+    kind: summarization
+    depth: shallow
+    prompt: >
+      Summarize fixtures/repo/CHANGELOG.md. Every released version and the headline change of each
+      must be covered. Put the final summary between <answer> and </answer>.
+    fixtures: [fixtures/repo/CHANGELOG.md]
+    success:
+      type: keywords_all     # required facts must be present (no line cap in v2)
+      required: ["1.0.0", "1.1.0", "2.0.0", "initial release", "rate limit", "breaking"]
+
+  - id: t3-import-trace
+    kind: context
+    depth: medium
+    prompt: >
+      Which files under fixtures/repo/src import from the local "./auth" module, and which exported
+      symbol does each use? Put the final answer between <answer> and </answer>, one "<file>: <symbol>"
+      per line.
+    fixtures: [fixtures/repo/src]
+    success:
+      type: pairs_all
+      required:
+        - { file: "users.ts", symbol: "hashPassword" }
+        - { file: "db.ts", symbol: "verifyToken" }
+
+  - id: t4-config-resolution
+    kind: context
+    depth: deep
+    prompt: >
+      Across fixtures/repo/docs (base.md, override.md, env.md), what is the EFFECTIVE value of the
+      setting "log_level", and which document sets the winning value? Precedence is env > override > base.
+      Put the value and the deciding document between <answer> and </answer>.
+    fixtures: [fixtures/repo/docs]
+    success:
+      type: value_and_source
+      value: "debug"
+      source_keyword: "env"
+
+  - id: t5-root-cause
+    kind: summarization
+    depth: deep
+    prompt: >
+      Read fixtures/repo/logs/incident.log and the code under fixtures/repo/src. Summarize the root
+      cause (cause -> effect -> fix) of the login failures, and name the file and function that must be
+      fixed. Put the final summary between <answer> and </answer>.
+    fixtures: [fixtures/repo/logs/incident.log, fixtures/repo/src]
+    success:
+      type: keywords_all     # causal facts + fix location (no line cap in v2)
+      required: ["verifyToken", "expired", "timezone", "auth.ts"]

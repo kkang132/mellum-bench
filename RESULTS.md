@@ -65,17 +65,25 @@ concurrency-contaminated for some tasks (t3's 263 s call-span exceeds its 151 s 
 
 The latency is the pipeline's shape, so the remedies are structural. In order of expected effect:
 
-1. **Adaptive depth.** A single local call already matches the pipeline's quality at about 5–13 s. The
+1. **Swap to the Instruct variant.** This is likely the single largest win. The runs above used
+   `Mellum2-12B-A2.5B-Thinking`, and the decomposition shows reasoning-token volume is the dominant
+   driver of both latency and Mellum token spend. Switching the workers to
+   `Mellum2-12B-A2.5B-Instruct` (set `MELLUM_MODEL=mellum2-instruct`; already wired in the provider
+   configs) drops the per-call Thinking tokens to near zero, which should sharply cut per-call wall
+   time across every stage with little quality loss on these retrieval/summarisation tasks. Because it
+   applies to all calls in the pipeline rather than reshaping it, it is the cheapest high-impact change
+   and should be tried first.
+2. **Adaptive depth.** A single local call already matches the pipeline's quality at about 5–13 s. The
    advisor should choose depth: one call for retrieval and summarisation, the three-stage pipeline only
    for work that genuinely decomposes. This alone brings Arm A to the single-call floor, below Arm B, on
-   these tasks. It is the largest gain.
-2. **Parallelise.** Where decomposition is warranted, run independent gather and summarise sub-tasks
+   these tasks. It is the largest structural gain.
+3. **Parallelise.** Where decomposition is warranted, run independent gather and summarise sub-tasks
    concurrently. Only the final synthesis must wait. This removes the strict serial chain.
-3. **Bound generation.** Cap Thinking and output tokens per call. Reasoning-token volume is the dominant
+4. **Bound generation.** Cap Thinking and output tokens per call. Reasoning-token volume is the dominant
    cost, and these tasks need little.
-4. **Stop re-ingesting the corpus.** Give each stage the previous stage's distilled output, not the full
+5. **Stop re-ingesting the corpus.** Give each stage the previous stage's distilled output, not the full
    corpus and the 12–14 k-token harness prompt again.
-5. **Gate the advisor.** Omit the frontier planning round-trip on simple tasks.
+6. **Gate the advisor.** Omit the frontier planning round-trip on simple tasks.
 
 ## Caveats
 

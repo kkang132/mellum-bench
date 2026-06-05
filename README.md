@@ -1,6 +1,6 @@
 # mellum-bench
 
-A benchmark of two architectures for summarisation and context-gathering: **Arm A**, a frontier
+A benchmark of two multi-agent workflows for summarisation and context-gathering: **Arm A**, a frontier
 *advisor* (Claude Opus 4.7) that plans once and delegates execution to local **Mellum2** workers
 behind three open harnesses (`codex`, `opencode`, `pi`); and **Arm B**, Claude (Opus 4.7) performing
 the whole task with its own subagents. The same five tasks are scored by two lenses: a deterministic

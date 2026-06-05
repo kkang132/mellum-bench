@@ -11,13 +11,13 @@ Let $\mathcal{T}$ denote the set of tasks, each equipped with a depth indicator 
 - $\ell > 0$ is the latency in milliseconds,
 - $M$ is the multiset of model invocations with associated token counts.
 
-The benchmark shall produce the set $\mathcal{O} = \{o(\tau, \alpha) : (\tau, \alpha) \in \mathcal{T} \times \mathcal{A}\}$.
+The benchmark produces the set $\mathcal{O} = \{o(\tau, \alpha) : (\tau, \alpha) \in \mathcal{T} \times \mathcal{A}\}$.
 
 ## 2. The Execution Protocol
 
 ### 2.1 Setup Phase
 
-Proposition 2.1. Before execution commences, the following invariants shall be established:
+Proposition 2.1. Before execution, the following invariants shall be established:
 
 1. The Mellum2 model shall be available at `http://127.0.0.1:8080`.
 2. The metering proxy shall be started on port 8077, forwarding to the upstream.

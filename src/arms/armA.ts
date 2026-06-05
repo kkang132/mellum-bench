@@ -1,6 +1,6 @@
 /** Arm A: Opus-4.7 advisor plans once, then the sequential Mellum2 harness pipeline executes.
  * Advisor cost is charged to the arm; worker cost is ~$0 (tokens metered via the proxy). */
-import { addUsage, type Regime, type Task } from "../config.js";
+import { addUsage, WORKER_MODEL, type Regime, type Task } from "../config.js";
 import { readFixtures, renderCorpus } from "../tasks.js";
 import { getHarness } from "../harnesses/index.js";
 import { makePlan } from "./advisor.js";
@@ -43,7 +43,7 @@ export const armA: Arm = {
         corpus,
         driveMode: regime.drive_mode,
         cwd: ctx.cwd,
-        model: "mellum2",
+        model: WORKER_MODEL,
         proxyUrl: ctx.proxyUrl,
         dummyKey: ctx.dummyKey,
         timeoutMs: ctx.timeoutMs

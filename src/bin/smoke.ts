@@ -4,6 +4,7 @@
 import { startMeter } from "../backend/meter.js";
 import { isUp } from "../backend/server.js";
 import { HARNESSES } from "../harnesses/index.js";
+import { WORKER_MODEL } from "../config.js";
 
 if (!(await isUp())) {
   console.error("Mellum2 not up at http://127.0.0.1:8080; start llama-server first.");
@@ -22,7 +23,7 @@ for (const [name, h] of Object.entries(HARNESSES)) {
     corpus: "",
     driveMode: "constrained_text",
     cwd: process.cwd(),
-    model: "mellum2",
+    model: WORKER_MODEL,
     proxyUrl: meter.url,
     dummyKey,
     timeoutMs: 120_000

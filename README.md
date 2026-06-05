@@ -52,6 +52,30 @@ Mellum2-12B-A2.5B-Thinking is a mixture of experts (12 B total, ≈ 2.5 B active
 mixed sliding-window (`n_swa = 1024`) and full attention, trained context 131 072, YaRN rope. It emits
 reasoning before its answer; downstream parsing must strip it.
 
+### Variant: Mellum2 Instruct (optional)
+
+The benchmark can run against the **Instruct** sibling instead: same architecture and flags, but it
+answers directly with no reasoning trace (lower latency; no `<think>` to strip). Pull it the same way,
+serve it in place of the Thinking GGUF, and point the benchmark at it via `MELLUM_MODEL`:
+
+```bash
+# pull the same high-bit quant of the Instruct variant; pin + verify the file hash
+hf download CodeFault/Mellum2-12B-A2.5B-Instruct-GGUF --include "*Q5_K_M*" --local-dir ./mellum2-instruct-q5km
+echo "eca760b0c3e9a658e2ec5de04aa44b243dc8571efac339defdb2364ff51fbf6b  ./mellum2-instruct-q5km/Mellum2-12B-A2.5B-Instruct-Q5_K_M.gguf" | shasum -a 256 -c
+
+# serve it (same port/flags; only the model path changes)
+./build/bin/llama-server -m ./mellum2-instruct-q5km/Mellum2-12B-A2.5B-Instruct-Q5_K_M.gguf \
+  --host 127.0.0.1 --port 8080 --ctx-size 32768 --n-gpu-layers 99 \
+  --temp 0.6 --top-p 0.95 --top-k 20 --jinja
+
+# select it for the benchmark (default is the Thinking variant, `mellum2`)
+export MELLUM_MODEL=mellum2-instruct
+```
+
+`MELLUM_MODEL` is a label routed to llama-server through the meter proxy; it MUST match the GGUF you
+actually serve. The two recognised values, `mellum2` (Thinking) and `mellum2-instruct` (Instruct), are
+registered in `config/providers/{codex.toml,pi.models.json,opencode.json}`.
+
 ## 4. Checkout and setup
 
 ```bash

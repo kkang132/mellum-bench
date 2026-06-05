@@ -11,6 +11,9 @@
       "models": {
         "mellum2": {
           "name": "Mellum2-12B-A2.5B-Thinking"
+        },
+        "mellum2-instruct": {
+          "name": "Mellum2-12B-A2.5B-Instruct"
         }
       }
     }

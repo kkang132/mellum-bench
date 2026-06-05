@@ -17,6 +17,18 @@
           "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
           "contextWindow": 131072,
           "maxTokens": 8192
+        },
+        {
+          "id": "mellum2-instruct",
+          "name": "Mellum2-12B-A2.5B-Instruct",
+          "api": "openai-completions",
+          "provider": "mellum",
+          "baseUrl": "http://127.0.0.1:8077/v1",
+          "reasoning": false,
+          "input": ["text"],
+          "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+          "contextWindow": 131072,
+          "maxTokens": 8192
         }
       ]
     }

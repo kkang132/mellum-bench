@@ -10,7 +10,7 @@ export interface HarnessInput {
   driveMode: DriveMode;
   /** Sandbox working directory the harness is confined to (dummy key only). */
   cwd: string;
-  model: string; // "mellum2"
+  model: string; // worker model id, e.g. "mellum2" (Thinking) or "mellum2-instruct"
   proxyUrl: string; // OpenAI-compatible base served by the metering proxy
   dummyKey: string;
   timeoutMs: number;

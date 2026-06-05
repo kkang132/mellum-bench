@@ -8,6 +8,10 @@ base_url = "http://127.0.0.1:8077/v1"
 wire_api = "responses"
 env_key = "MELLUM_DUMMY_KEY"
 
-# Select with: codex exec -c model_provider=mellum -c model=mellum2 ...
+# Model id is a free-form label forwarded to llama-server (which serves whichever GGUF is loaded).
+# Select the variant at call time, e.g.
+#   codex exec -c model_provider=mellum -c model=mellum2 ...           # Thinking (default)
+#   codex exec -c model_provider=mellum -c model=mellum2-instruct ...  # Instruct
+# The benchmark sets this from MELLUM_MODEL (see config.ts WORKER_MODEL).
 model = "mellum2"
 model_provider = "mellum"

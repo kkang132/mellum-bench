@@ -10,6 +10,7 @@ import { startMeter, type MeterRecord } from "../backend/meter.js";
 import { isUp } from "../backend/server.js";
 import { loadTaskList, readFixtures, renderCorpus } from "../tasks.js";
 import { HARNESSES } from "../harnesses/index.js";
+import { WORKER_MODEL } from "../config.js";
 
 const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 const dummyKey = process.env.MELLUM_DUMMY_KEY ?? "local-dummy";
@@ -78,7 +79,7 @@ for (const task of tasks) {
     const res = await fetch("http://127.0.0.1:8077/v1/chat/completions", {
       method: "POST",
       headers: { "content-type": "application/json", authorization: `Bearer ${dummyKey}` },
-      body: JSON.stringify({ model: "mellum2", messages: [{ role: "user", content: prompt }], max_tokens: 4096, temperature: 0.6 })
+      body: JSON.stringify({ model: WORKER_MODEL, messages: [{ role: "user", content: prompt }], max_tokens: 4096, temperature: 0.6 })
     });
     await res.text();
     const wall = Date.now() - t0;
@@ -91,7 +92,7 @@ for (const task of tasks) {
     const before = meter.records().length;
     meter.setContext({ taskId: task.id, stage: "solo", harness: name });
     const t0 = Date.now();
-    const res = await h.run({ prompt: task.prompt.trim(), corpus, driveMode: "constrained_text", cwd: ROOT, model: "mellum2", proxyUrl: meter.url, dummyKey, timeoutMs });
+    const res = await h.run({ prompt: task.prompt.trim(), corpus, driveMode: "constrained_text", cwd: ROOT, model: WORKER_MODEL, proxyUrl: meter.url, dummyKey, timeoutMs });
     const wall = Date.now() - t0;
     await settle();
     const recs = meter.records().slice(before);

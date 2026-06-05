@@ -17,7 +17,7 @@ export const codex: Harness = {
     const args = [
       "exec",
       "-c", "model_provider=mellum",
-      "-c", "model=mellum2",
+      "-c", `model=${input.model}`,
       "-c", `model_providers.mellum.name="Mellum2"`,
       "-c", `model_providers.mellum.base_url="${input.proxyUrl}/v1"`,
       "-c", `model_providers.mellum.wire_api="responses"`,

@@ -6,6 +6,17 @@ import { readFileSync } from "node:fs";
 import { parse as parseYaml } from "yaml";
 import { z } from "zod";
 
+// ---------- Worker model ----------
+/**
+ * The local Mellum2 variant the harnesses request, routed through the meter proxy to llama-server.
+ * It is a label only: llama-server serves whichever GGUF the operator loaded (README §3), so the
+ * label and the served GGUF must agree. Two variants are wired in the provider configs:
+ *   - `mellum2`          → Mellum2-12B-A2.5B-Thinking  (default; emits reasoning)
+ *   - `mellum2-instruct` → Mellum2-12B-A2.5B-Instruct  (direct, low-latency answers)
+ * Select with the `MELLUM_MODEL` env var. Passed as typed config; no component branches on it.
+ */
+export const WORKER_MODEL = process.env.MELLUM_MODEL ?? "mellum2";
+
 // ---------- Tasks ----------
 export const SuccessSpec = z.discriminatedUnion("type", [
   z.object({ type: z.literal("set_equals"), golden: z.array(z.string()).min(1) }),

@@ -48,6 +48,14 @@ export async function runBenchmark(opts: RunnerOptions): Promise<BenchReport> {
   const tasks = loadTaskList(opts.tasksPath);
   const regime = loadRegimes(opts.regimesPath)[0]!; // v2: a single fair run
 
+  // Structured logging for observability during execution. The timestamped records allow
+  // reconstruction of the execution timeline and cost accumulation without waiting for
+  // the final report.
+  const log = (msg: string) => {
+    const ts = new Date().toISOString();
+    console.log(`[${ts}] ${msg}`);
+  };
+
   if (!(await isUp(UPSTREAM))) {
     throw new Error(`Mellum2 not reachable at ${UPSTREAM}. Start llama-server first (see ~/models/AGENTS.md).`);
   }
@@ -56,10 +64,12 @@ export async function runBenchmark(opts: RunnerOptions): Promise<BenchReport> {
   mkdirSync(opts.resultsDir, { recursive: true });
   const meter = await startMeter({ port: PROXY_PORT, upstream: UPSTREAM, logPath: join(opts.resultsDir, "meter.jsonl") });
 
+  log(`Benchmark started: ${tasks.length} tasks × ${ARMS.length} arms`);
   const outcomes: TaskOutcome[] = [];
   try {
     for (const task of tasks) {
       for (const arm of ARMS) {
+        log(`Starting ${task.id} / ${arm.id}`);
         const work = join(opts.resultsDir, "work", task.id, arm.id);
         mkdirSync(work, { recursive: true });
         const ctx: ArmContext = {
@@ -74,6 +84,10 @@ export async function runBenchmark(opts: RunnerOptions): Promise<BenchReport> {
         const res = await arm.run(task, regime, ctx);
         const det = scoreDeterministic(res.text, task.success);
         const judged = await judgeAnswer(task, res.text, { cwd: work, timeoutMs: opts.timeoutMs });
+
+        log(`  Deterministic: ${det.pass ? 'PASS' : 'FAIL'} (${det.detail})`);
+        log(`  Judge: ${judged.quality?.toFixed(2) ?? 'error'}`);
+        log(`  Cost: $${res.usage.costUsd.toFixed(4)}, Latency: ${(res.latencyMs / 1000).toFixed(1)}s`);
 
         // Persist everything for auditability.
         writeFileSync(join(work, "answer.txt"), res.text);
@@ -105,6 +119,9 @@ export async function runBenchmark(opts: RunnerOptions): Promise<BenchReport> {
   } finally {
     await meter.stop();
   }
+
+  const totalCost = outcomes.reduce((sum, o) => sum + o.costUsd, 0);
+  log(`Benchmark complete: ${outcomes.length} outcomes, total cost $${totalCost.toFixed(4)}`);
 
   const aggregates = aggregate(outcomes);
   const depthOrder = tasks.map((t: Task) => t.id);

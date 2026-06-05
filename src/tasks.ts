@@ -2,7 +2,7 @@
  * Task loading + fixture reading. Tasks read ONLY from the local fixtures corpus (no network),
  * per the determinism contract in ARCHITECTURE.md §5.
  */
-import { readFileSync, readdirSync, statSync } from "node:fs";
+import { readFileSync, readdirSync, realpathSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { loadTasks, type Task } from "./config.js";
 
@@ -36,12 +36,28 @@ export interface FixtureFile {
 /**
  * Read all fixture files referenced by a task, repo-relative. Used to inject corpus content into
  * the prompt in `constrained_text` drive mode (so workers need no tool-calling).
+ *
+ * The function validates that (i) each referenced fixture exists, and (ii) no path escapes
+ * the repository root via '..' sequences or symbolic links. This is a defensive measure:
+ * the task configuration is local and not user-supplied at runtime, but an explicit check
+ * makes the invariant clear and fails fast with a precise error message should the
+ * configuration become malformed.
  */
 export function readFixtures(task: Task, repoRoot: string): FixtureFile[] {
+  const realRepoRoot = realpathSync(repoRoot);
   const files: FixtureFile[] = [];
   for (const ref of task.fixtures) {
     const abs = join(repoRoot, ref);
+    // Resolve the absolute path and verify it lies within the repository root.
+    const realAbs = realpathSync(abs);
+    if (!realAbs.startsWith(realRepoRoot)) {
+      throw new Error(`Path traversal attempt: fixture ${ref} resolves outside repository root`);
+    }
     for (const f of collectFiles(abs)) {
+      const realF = realpathSync(f);
+      if (!realF.startsWith(realRepoRoot)) {
+        throw new Error(`Path traversal attempt: collected file ${f} resolves outside repository root`);
+      }
       files.push({ path: relative(repoRoot, f), content: readFileSync(f, "utf8") });
     }
   }

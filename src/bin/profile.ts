@@ -2,7 +2,7 @@
 /** Free per-harness latency profiler. Runs each harness standalone on each task, strictly serialised,
  * and separates model-busy time (union of upstream Mellum2 request intervals, from the proxy) from
  * harness overhead (wall − model). Includes a raw direct-to-Mellum2 baseline (the floor). */
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -36,7 +36,11 @@ function unionMs(recs: MeterRecord[]): number {
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 function killStragglers(): void {
-  try { execSync('pkill -f "opencode" 2>/dev/null; pkill -f "codex" 2>/dev/null', { stdio: "ignore" }); } catch { /* none */ }
+  // The arguments to pkill are fixed strings, not user input; nonetheless we invoke it
+  // with a proper argument array rather than a shell string to avoid any possibility of
+  // command injection through malformed process names.
+  try { execFileSync("pkill", ["-f", "opencode"], { stdio: "ignore" }); } catch { /* none */ }
+  try { execFileSync("pkill", ["-f", "codex"], { stdio: "ignore" }); } catch { /* none */ }
 }
 
 // Kill any lingering harness server, then wait until the proxy is quiet (no new request for

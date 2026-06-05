@@ -90,6 +90,27 @@ for each lens, the crossover task: the first point, shallow-to-deep, at which Ar
 
 ## 7. Observed (single run; illustrative, not definitive)
 
+The five tasks were chosen by Opus 4.8, the model that designed this benchmark, to span the two target
+capabilities across a shallow-to-deep gradient, each with a checkable ground truth:
+
+1. **t1, signatures** (context, shallow). List every exported function and class under `fixtures/repo/src`.
+   Exhaustive enumeration; the ground truth is an exact identifier set.
+2. **t2, changelog** (summarisation, shallow). Summarise the changelog, covering every released version and
+   its headline. Faithful condensation without omission.
+3. **t3, import-trace** (context, medium). Name the files importing `./auth` and the symbol each uses.
+   Relational retrieval across files; the ground truth is a set of file-to-symbol pairs.
+4. **t4, config-resolution** (context, deep). Determine the effective `log_level` across three documents
+   under a stated precedence. Resolution of conflicting sources, not mere retrieval.
+5. **t5, root-cause** (summarisation, deep). From logs and code, give the cause, effect, and fix of the
+   login failures, and name the file and function at fault. Cross-source causal synthesis and localisation.
+
+The selection is defensible on three grounds. It covers both target capabilities. It escalates the kind of
+work rather than its size: enumeration, condensation, relational tracing, conflict resolution, causal
+synthesis. That escalation is the axis along which a single cheap call ceases to suffice, which is what the
+A-against-B comparison probes. And each task carries a deterministic ground truth, so the anchor scores
+without a model in the loop. The representativeness is of task type and depth; the corpus is small and
+synthetic, and does not stand in for real-world scale or noise.
+
 Both arms solved all five tasks; judged quality was a near-tie at the top (Arm A ≈ 0.99, Arm B ≈ 0.94 on
 cleanly judged tasks). The separation lay in cost and speed:
 

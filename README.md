@@ -1,7 +1,7 @@
 # mellum-bench
 
 A benchmark of two multi-agent workflows for summarisation and context-gathering: **Arm A**, a frontier
-*advisor* (Claude Opus 4.7) that plans once and delegates execution to local [Mellum2](https://huggingface.co/JetBrains/Mellum2-12B-A2.5B-Thinking) workers
+*advisor* (Claude Opus 4.7) that plans once and delegates execution to local JetBrains [Mellum2](https://huggingface.co/JetBrains/Mellum2-12B-A2.5B-Thinking) workers
 behind three open harnesses (`codex`, `opencode`, `pi`); and **Arm B**, Claude (Opus 4.7) performing
 the whole task with its own subagents. The same five tasks are scored by two lenses: a deterministic
 substance check and an Opus 4.8 judge.
